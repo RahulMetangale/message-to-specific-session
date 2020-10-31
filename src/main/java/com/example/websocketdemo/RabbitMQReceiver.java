@@ -18,11 +18,12 @@ public class RabbitMQReceiver {
 
 	@Autowired
 	public GlobalProperties globalProperties;
+	
+	private ObjectMapper mapper = new ObjectMapper();
 
 	@RabbitListener(queues = "long_running_process_progress_status")
 	public void receive(@Payload String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag)
 			throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Notification notification = mapper.readValue(message, Notification.class);
 			String sessionId = globalProperties.GetSessionId(notification.getTransactionId());
